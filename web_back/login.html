@@ -9,6 +9,8 @@
     <link rel="stylesheet" type="text/css" href="css/reset.css">
     <link rel="stylesheet" type="text/css" href="css/iconfont.css">
     <link rel="stylesheet" type="text/css" href="css/main.css">
+    <link rel="stylesheet" href="./js/bootstrap/css/bootstrap.min.css">
+
 </head>
 
 <body>
@@ -30,38 +32,59 @@
         </div>
 
     </div>
-    <script src="./js/jquery-1.12.4.min.js"></script>
-    <script>
-        //入口函数
-        $(function () {
+    <!-- 模态框 -->
 
-            $('.input_sub').on('click', function (e) {
-                e.preventDefault();
-                var name = $('.input_txt').val();
-                var password = $('.input_pass').val();
-                if($('.input_txt').val('')||$('.input_pass').val('')){
+    <div class="modal fade" tabindex="-1" role="dialog" id="myModal">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                            aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title">温馨提示</h4>
+                </div>
+                <div class="modal-body">
+                    <p>One fine body&hellip;</p>
+                </div>
+                <div class="modal-footer">
+                    <!-- <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary">Save changes</button> -->
+                </div>
+                <script src="./js/jquery-1.12.4.min.js"></script>
+                <script src="./js/bootstrap/js/bootstrap.min.js"></script>
 
-                    alert('请输入账号密码');
-                    return;
-                }
-                $.post({
+                <script>
+                    //入口函数
+                    $(function () {
 
-                    url: 'http://localhost:8000/admin/login',
-                    data: { user_name: name, password: password },
-                    success: function (res) {
+                        $('.input_sub').on('click', function (e) {
+                            e.preventDefault();
+                            var name = $('.input_txt').val().trim();
+                            var password = $('.input_pass').val().trim();
+                            if (name =='' || password=='') {
 
-                        if (res.code == 200) {
+                                $('.modal-body').text('账号或者密码为空!');
+                                $('#myModal').modal();
+                                return;
+                            }
+                            $.post({
 
-                            window.location.href = 'index.html';
-                        }else{
+                                url: 'http://localhost:8000/admin/login',
+                                data: { user_name: name, password: password },
+                                success: function (res) {
 
-                            alert(res.msg);
-                        }
-                    }
-                })
-            })
-        })
-    </script>
+                                    if (res.code == 200) {
+
+                                        window.location.href = 'index.html';
+                                    } else {
+
+                                        $('.modal-body').text(res.msg);
+                                        $('#myModal').modal();
+                                    }
+                                }
+                            })
+                        })
+                    })
+                </script>
 </body>
 
 </html>
