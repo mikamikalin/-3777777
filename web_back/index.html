@@ -103,6 +103,39 @@
         }
 
     </script>
+    <script>
+        $('.icon-tuichu').parent().on('click',function(e){
 
+            e.preventDefault();
+            $.post({
+
+                url:'http://localhost:8000/admin/logout',
+                success:function(res){
+
+                    if(res.code ==200){
+
+                        window.location.href = 'login.html';
+                    }
+                }
+            })
+        });
+
+        $.get({
+
+            url:'http://localhost:8000/admin/getuser',
+            success:function(res){
+
+                if(res.code==200){
+
+                    $('.user_info').children('span').html('<span>欢迎&nbsp;&nbsp;'+res.data.nickname +'</span>');
+                    $('.user_info').children('img').attr('src',res.data.user_pic);
+                    $('.user_center_link').children('img').attr('src',res.data.user_pic);
+                }
+            }
+        });
+
+
+    </script>
+    
 </body>
 </html>
