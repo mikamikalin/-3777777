@@ -29,8 +29,39 @@
             </form>
         </div>
 
-    </div> 
+    </div>
+    <script src="./js/jquery-1.12.4.min.js"></script>
+    <script>
+        //入口函数
+        $(function () {
 
+            $('.input_sub').on('click', function (e) {
+                e.preventDefault();
+                var name = $('.input_txt').val();
+                var password = $('.input_pass').val();
+                if($('.input_txt').val('')||$('.input_pass').val('')){
+
+                    alert('请输入账号密码');
+                    return;
+                }
+                $.post({
+
+                    url: 'http://localhost:8000/admin/login',
+                    data: { user_name: name, password: password },
+                    success: function (res) {
+
+                        if (res.code == 200) {
+
+                            window.location.href = 'index.html';
+                        }else{
+
+                            alert(res.msg);
+                        }
+                    }
+                })
+            })
+        })
+    </script>
 </body>
 
 </html>
