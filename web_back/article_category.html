@@ -12,6 +12,38 @@
     <link rel="stylesheet" href="css/main.css">
     <script src="js/jquery-1.12.4.min.js"></script>
     <script src="js/bootstrap/js/bootstrap.min.js"></script>
+    <script src="../template-web.js"></script>
+   
+    <script type="tetx/html" id="tp1">
+    {{each data v}}
+
+        <tr>
+            <td>{{v.name}}</td>
+            <td>{{v.slug}}</td>
+            <td class="text-center">
+                <a href="javascript:editTr({&quot;id&quot;:&quot;1&quot;,&quot;slug&quot;:&quot;uncategorized&quot;,&quot;name&quot;:&quot;未分类&quot;});"
+                    class="btn btn-info btn-xs">编辑</a>
+                <a href="javascript:deleteTr( {{v.id}} );" class="btn btn-danger btn-xs">删除</a>
+            </td>
+        </tr>
+            
+        {{/each}}
+
+    </script>
+
+   <script type="text/html" id="tp2">
+    <tr>
+        <td>{{name}}</td>
+        <td>{{slug}}</td>
+        <td class="text-center">
+            <a href="javascript:editTr({&quot;id&quot;:&quot;1&quot;,&quot;slug&quot;:&quot;uncategorized&quot;,&quot;name&quot;:&quot;未分类&quot;});"
+                class="btn btn-info btn-xs">编辑</a>
+            <a href="javascript:deleteTr( 0 );" class="btn btn-danger btn-xs">删除</a>
+        </td>
+    </tr>
+
+   </script>
+   
 </head>
 
 <body>
@@ -91,11 +123,11 @@
               <form>
                 <div class="form-group">
                   <label for="recipient-name" class="control-label">分类名称:</label>
-                  <input type="text" class="form-control" id="recipient-name">
+                  <input type="text" class="form-control" id="recipient-name1">
                 </div>
                 <div class="form-group">
                   <label for="message-text" class="control-label">分类别名:</label>
-                  <input type="text" class="form-control" id="recipient-name">
+                  <input type="text" class="form-control" id="recipient-name2">
                 </div>
               </form>
             </div>
@@ -106,6 +138,8 @@
           </div>
         </div>
       </div>
+
+    
 
       <script>
           $('#addModal').modal({
@@ -119,7 +153,7 @@
           });
 
           $('#model_add').click(function(){
-            alert('add');
+            alert('修改成功');
             $('#addModal').modal('hide');
           });
 
@@ -129,6 +163,45 @@
                 $('#addModal').modal('show');
               }
           })      
+      </script>
+
+      <script>
+       $(function(){
+
+          $.get({
+              url:'http://localhost:8000/admin/category_search',
+              success:function(res){
+                  
+                  
+                  var tp1 = template('tp1',res);
+                  $('tbody').html(tp1);
+              }
+              
+          })
+
+          $('.btn-primary').on('click',function(){
+
+              var name = $('#recipient-name1').val();
+              var slug = $('#recipient-name2').val();
+              
+            $.post({
+                url:'http://localhost:8000/admin/category_add',
+                data:{name:name,slug:slug},
+                success:function(res){
+                    console.log(res);
+                    
+                     if(res.code == 200){
+
+                        var tp2 = template('tp2',{name:name,slug:slug});
+                        $('tbody').append(tp2);
+                        
+
+                    }
+                }
+            })
+          })
+       });
+
       </script>
 
 </body>

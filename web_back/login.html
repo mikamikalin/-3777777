@@ -43,7 +43,7 @@
                     <h4 class="modal-title">温馨提示</h4>
                 </div>
                 <div class="modal-body">
-                    <p>One fine body&hellip;</p>
+                    <p>登录成功&hellip;</p>
                 </div>
                 <div class="modal-footer">
                     <!-- <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
@@ -53,37 +53,46 @@
                 <script src="./js/bootstrap/js/bootstrap.min.js"></script>
 
                 <script>
-                    //入口函数
+
                     $(function () {
 
                         $('.input_sub').on('click', function (e) {
+                            
+                           
                             e.preventDefault();
-                            var name = $('.input_txt').val().trim();
-                            var password = $('.input_pass').val().trim();
-                            if (name =='' || password=='') {
+                            var name = $('.input_txt').val();
+                            var password = $('.input_pass').val();
+                            if(name == "" || password == ""){
 
-                                $('.modal-body').text('账号或者密码为空!');
                                 $('#myModal').modal();
+                                $('.modal-body').children('p').html('<p>账号密码不能为空&hellip;</p>');
                                 return;
-                            }
+                            };
+
                             $.post({
 
-                                url: 'http://localhost:8000/admin/login',
-                                data: { user_name: name, password: password },
-                                success: function (res) {
+                                url:'http://localhost:8000/admin/login',
+                                data:{user_name:name,password:password},
+                                success:function(res){
+                                    console.log(res);
+                                    if(res.code==200){
 
-                                    if (res.code == 200) {
-
-                                        window.location.href = 'index.html';
-                                    } else {
-
-                                        $('.modal-body').text(res.msg);
                                         $('#myModal').modal();
+                                        $('.modal-body').children('p').html('<p>登录成功&hellip;</p>');
+                                        window.location.href = "index.html";
+                                        
+                                    }else{
+
+                                        $('#myModal').modal();
+                                        $('.modal-body').children('p').html('<p>'+ res.msg+'&hellip;</p>');
                                     }
                                 }
                             })
+
                         })
-                    })
+
+
+                    });
                 </script>
 </body>
 

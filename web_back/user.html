@@ -24,38 +24,39 @@
                 <div class="form-group">
                     <label for="inputEmail3" class="col-sm-2 control-label">用户名称：</label>
                     <div class="col-sm-4">
-                        <input type="text" class="form-control" id="inputEmail3" value="李思思">
+                        <input type="text" name="username" class="form-control username" id="inputEmail1" value="李思思">
                     </div>
                 </div>
                 <div class="form-group">
                     <label for="inputEmail3" class="col-sm-2 control-label">昵称：</label>
                     <div class="col-sm-4">
-                        <input type="text" class="form-control" id="inputEmail3" value="思思">
+                        <input type="text" name="nickname" class="form-control nickname" id="inputEmail2" value="思思">
                     </div>
                 </div>
                 <div class="form-group">
                     <label for="inputEmail3" class="col-sm-2 control-label">邮箱：</label>
                     <div class="col-sm-4">
-                        <input type="text" class="form-control" id="inputEmail3" value="lisisi@126.com">
-                    </div>
-                </div>
-                
-                <div class="form-group">
-                    <label for="inputPassword3" class="col-sm-2 control-label">用户图标：</label>
-                    <div class="col-sm-10">
-                        <img src="images/2.jpg" alt="" class="user_pic">
-                        <input type="file" id="exampleInputFile">
+                        <input type="text" name="email" class="form-control email" id="inputEmail3"
+                            value="lisisi@126.com">
                     </div>
                 </div>
 
                 <div class="form-group">
-                        <label for="inputEmail3" class="col-sm-2 control-label">密码：</label>
-                        <div class="col-sm-4">
-                            <input type="password" class="form-control" id="inputEmail3" value="12345678">
-                        </div>
+                    <label for="inputPassword3" class="col-sm-2 control-label">用户图标：</label>
+                    <div class="col-sm-10">
+                        <img src="images/2.jpg" alt="" class="user_pic">
+                        <input type="file" id="exampleInputFile" name="user_pic">
                     </div>
-               
-    
+                </div>
+
+                <div class="form-group">
+                    <label for="inputEmail3" class="col-sm-2 control-label">密码：</label>
+                    <div class="col-sm-4">
+                        <input type="password" name="password" class="form-control" id="inputEmail4" value="12345678">
+                    </div>
+                </div>
+
+
                 <div class="form-group">
                     <div class="col-sm-offset-2 col-sm-10">
                         <button type="submit" class="btn btn-success">修改</button>
@@ -64,7 +65,112 @@
             </form>
         </div>
     </div>
+    <!-- 模态框 -->
+    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                            aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="myModalLabel">温馨提示</h4>
+                </div>
+                <div class="modal-body">
+                    修改成功,是否返回首页
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                    <button type="button" class="btn btn-primary">确认</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
 </body>
+<script src="./js/bootstrap/js/bootstrap.min.js"></script>
+<script>
+    $(function () {
+
+        $('#exampleInputFile').change(function () {
+
+            var url = URL.createObjectURL(this.files[0]);
+            $('.user_pic').attr('src', url);
+        });
+
+        $.get({
+
+            url: 'http://localhost:8000/admin/userinfo_get',
+            success: function (res) {
+
+                // $('.username').val(res.data.username);
+                // $('.nickname').val(res.data.nickname);
+                // $('.email').val(res.data.email);
+                // $('.password').val(res.data.password);
+                if (res.code == 200) {
+
+                    for (var key in res.data) {
+
+                        $('.' + key).val(res.data[key]);
+
+                    }
+                    $('.user_pic').attr('src', res.data.user_pic);
+
+                } else {
+
+                    $('#myModal').modal();
+                    $('.modal-body').html(res.msg);
+                }
+
+
+            }
+
+        });
+
+        $('.btn-success').on('click', function (e) {
+            e.preventDefault();
+
+            var fm = new FormData($('form')[0]);
+            // console.log(fm.get('username'));
+            // console.log(fm.get('nickname'));
+
+
+            $.post({
+
+                url: 'http://localhost:8000/admin/userinfo_edit',
+                data: fm,
+                contentType: false,
+                processData: false,
+                success: function (res) {
+                    // console.log(res);
+
+                    // console.log(res.nickname);
+
+                    if (res.code == 200) {
+
+                        $('#myModal').modal();
+
+                        $('.btn-primary').on('click', function () {
+
+                            $.get({
+                                url: 'http://localhost:8000/admin/getuser',
+                                success: function (res) {
+
+                                    parent.$('.user_info').children('span').html('<span>欢迎&nbsp;&nbsp;' + res.data.nickname + '</span>');
+                                    parent.$('.user_info').children('img').attr('src', res.data.user_pic);
+                                    parent.$('.user_center_link').children('img').attr('src', res.data.user_pic);
+                                }
+                            })
+                        })
+                    }
+
+                }
+                
+            })
+
+           parent.location.href = "index.html";
+        });
+
+
+    });
+</script>
 
 </html>
